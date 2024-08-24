@@ -2,18 +2,13 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const app = express();
-
-// Use the environment port or default to 3000
 const port = process.env.PORT || 3000;
 
-// Middleware to parse request body
+app.use(cors()); // Enable CORS
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Enable CORS
-app.use(cors());
-
-// Store submissions in-memory (note: this will be lost when server restarts)
+// In-memory data store
 let submissions = [];
 
 // Serve the index.html file
@@ -24,17 +19,16 @@ app.get('/', (req, res) => {
 // Handle form submission
 app.post('/submit-form', (req, res) => {
     const { leaving_from, going_to } = req.body;
-
-    // Store the submission
-    submissions.push({ leavingFrom: leaving_from, goingTo: going_to });
-
     console.log(`Leaving from: ${leaving_from}, Going to: ${going_to}`);
-
+    
+    // Store the submitted data
+    submissions.push({ leavingFrom: leaving_from, goingTo: going_to });
+    
     res.send('Form data received successfully!');
 });
 
-// Provide data at /data endpoint
-app.get('/data', (req, res) => {
+// Provide data at root endpoint
+app.get('/', (req, res) => {
     res.json(submissions);
 });
 
