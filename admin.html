@@ -12,6 +12,8 @@
     <h2>Submissions:</h2>
     <div id="submissions"></div>
 
+    <button onclick="clearSubmissions()">Clear</button>
+
     <script>
         function fetchSubmissions() {
             fetch('https://port-0-uav-service-m08fk98t55315a03.sel4.cloudtype.app/data')
@@ -28,6 +30,24 @@
             .catch(error => {
                 console.error('Fetch error:', error);
                 alert(`There was an error fetching the submissions: ${error.message}`);
+            });
+        }
+
+        function clearSubmissions() {
+            fetch('https://port-0-uav-service-m08fk98t55315a03.sel4.cloudtype.app/clear', {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Submissions cleared successfully!');
+                    fetchSubmissions(); // Refresh the list of submissions
+                } else {
+                    throw new Error('Failed to clear submissions.');
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                alert(`There was an error clearing the submissions: ${error.message}`);
             });
         }
 

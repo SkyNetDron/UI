@@ -38,6 +38,12 @@ app.get('/data', (req, res) => {
     res.json(submissions);
 });
 
+// Clear data at /clear endpoint (for admin use)
+app.delete('/clear', (req, res) => {
+    submissions = []; // Clear the submissions array
+    res.send('Submissions cleared successfully!');
+});
+
 // Start the server
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
