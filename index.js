@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
+const multer = require('multer'); // Multer for handling file uploads
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -8,6 +9,17 @@ const port = process.env.PORT || 3000;
 app.use(cors()); // 모든 출처에 대해 CORS를 허용합니다.
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+// Set up Multer for file uploads
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads'); // Directory to save the uploaded files
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname)); // Filename with timestamp
+    }
+});
+const upload = multer({ storage: storage });
 
 // In-memory data store
 let submissions = [];
@@ -22,13 +34,15 @@ app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
-// Handle form submission
-app.post('/submit-form', (req, res) => {
+// Handle form submission with file upload
+app.post('/submit-form', upload.single('photo'), (req, res) => {
     const { leaving_from, going_to } = req.body;
-    console.log(`Leaving from: ${leaving_from}, Going to: ${going_to}`);
+    const photo = req.file ? `https://port-0-uav-service-m08fk98t55315a03.sel4.cloudtype.app/uploads/${req.file.filename}` : null;
+    
+    console.log(`Leaving from: ${leaving_from}, Going to: ${going_to}, Photo URL: ${photo}`);
     
     // Store the submitted data
-    submissions.push({ leavingFrom: leaving_from, goingTo: going_to });
+    submissions.push({ leavingFrom: leaving_from, goingTo: going_to, photo: photo });
     
     res.send('Form data received successfully!');
 });
@@ -43,6 +57,9 @@ app.delete('/clear', (req, res) => {
     submissions = []; // Clear the submissions array
     res.send('Submissions cleared successfully!');
 });
+
+// Serve static files from 'uploads' directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Start the server
 app.listen(port, () => {

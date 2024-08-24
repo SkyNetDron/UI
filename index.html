@@ -5,45 +5,176 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UAV Delivery Service</title>
     <link rel="stylesheet" href="css/style.css" type="text/css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center; /* Center-align text */
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            margin-top: 20px; /* Adjust top margin as needed */
+            margin-bottom: 20px; /* Space below the heading */
+        }
+
+        .wrapper {
+            margin-bottom: 20px; /* Adjust the space between form fields */
+        }
+
+        .bg {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .button-group {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .button-group button {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .button-group button:hover {
+            background-color: #0056b3;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
 </head>
 <body>
     <h1>UAV Delivery Service</h1>
+    <img src="images/logo.jpg" alt="Example Image" style="max-width: 100%; height: auto;">
+    <p></p>
     
-    <form id="form_1" onsubmit="submitForm(event)">
-        <div>
-            <label>Leaving From:</label>
-            <input type="text" name="leaving_from" placeholder="Enter City or Airport Code">
+    <form id="form_1" onsubmit="submitForm(event)" enctype="multipart/form-data">
+        <div class="wrapper">
+            <div class='bg'>
+                <label>Leaving From:</label>
+                <input type="text" name="leaving_from" id="leaving_from" placeholder="Enter City or Airport Code">
+                <div class="button-group">
+                    <button type="button" onclick="setLeavingFrom('A')">A</button>
+                    <button type="button" onclick="setLeavingFrom('B')">B</button>
+                    <button type="button" onclick="setLeavingFrom('C')">C</button>
+                    <button type="button" onclick="setLeavingFrom('D')">D</button>
+                </div>
+            </div>
         </div>
-        <div>
-            <label>Going To:</label>
-            <input type="text" name="going_to" placeholder="Enter City or Airport Code">
+        <div class="wrapper">
+            <div class='bg'>
+                <label>Going To:</label>
+                <input type="text" name="going_to" id="going_to" placeholder="Enter City or Airport Code">
+                <div class="button-group">
+                    <button type="button" onclick="setGoingTo('A')">A</button>
+                    <button type="button" onclick="setGoingTo('B')">B</button>
+                    <button type="button" onclick="setGoingTo('C')">C</button>
+                    <button type="button" onclick="setGoingTo('D')">D</button>
+                </div>
+            </div>
         </div>
         <div>
             <input type="submit" value="Submit">
         </div>
     </form>
 
+    <h2>Submissions:</h2>
+    <div id="submissions"></div>
+
+    <h2>Example Image:</h2>
+    <!-- Static Image from 'image' folder -->
+    <img src="images/img_1.jpg" alt="Example Image" style="max-width: 100%; height: auto;">
+
     <script>
+        function setLeavingFrom(value) {
+            document.getElementById('leaving_from').value = value;
+            console.log('Leaving From set to:', value); // Debugging line
+        }
+
+        function setGoingTo(value) {
+            document.getElementById('going_to').value = value;
+            console.log('Going To set to:', value); // Debugging line
+        }
+
         function submitForm(event) {
             event.preventDefault();
-
-            const leavingFrom = document.querySelector('input[name="leaving_from"]').value;
-            const goingTo = document.querySelector('input[name="going_to"]').value;
-
+            
+            const formData = new FormData(document.getElementById('form_1'));
+            
             fetch('https://port-0-uav-service-m08fk98t55315a03.sel4.cloudtype.app/submit-form', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ leaving_from: leavingFrom, going_to: goingTo }),
+                body: formData,
             })
             .then(response => response.text())
             .then(data => {
                 alert(data); // Display the success message from the server
+                fetchSubmissions(); // Refresh the list of submissions
             })
             .catch(error => {
                 console.error('Fetch error:', error);
                 alert(`There was an error submitting the form: ${error.message}`);
             });
         }
+
+        function fetchSubmissions() {
+            fetch('https://port-0-uav-service-m08fk98t55315a03.sel4.cloudtype.app/data')
+            .then(response => response.json())
+            .then(data => {
+                const submissionsDiv = document.getElementById('submissions');
+                submissionsDiv.innerHTML = ''; // Clear the current list
+                data.forEach(submission => {
+                    const p = document.createElement('p');
+                    p.textContent = `Leaving from: ${submission.leavingFrom}, Going to: ${submission.goingTo}`;
+                    
+                    // Create an image element if a photo is available
+                    if (submission.photo) {
+                        const img = document.createElement('img');
+                        img.src = submission.photo;
+                        img.style.maxWidth = '200px';
+                        img.style.maxHeight = '200px';
+                        img.alt = 'Uploaded photo';
+                        p.appendChild(img);
+                    }
+
+                    submissionsDiv.appendChild(p);
+                });
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                alert(`There was an error fetching the submissions: ${error.message}`);
+            });
+        }
+
+        // Fetch submissions on page load
+        window.onload = fetchSubmissions;
     </script>
 </body>
 </html>
