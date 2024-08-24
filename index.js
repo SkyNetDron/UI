@@ -1,10 +1,11 @@
 const express = require('express');
 const path = require('path');
-const cors = require('cors');
+const cors = require('cors'); // CORS 모듈 추가
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(cors()); // Enable CORS
+// CORS 설정
+app.use(cors()); // 모든 출처에 대해 CORS를 허용합니다.
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -28,7 +29,7 @@ app.post('/submit-form', (req, res) => {
 });
 
 // Provide data at root endpoint
-app.get('/', (req, res) => {
+app.get('/submissions', (req, res) => {
     res.json(submissions);
 });
 
