@@ -33,7 +33,7 @@
             const leavingFrom = document.querySelector('input[name="leaving_from"]').value;
             const goingTo = document.querySelector('input[name="going_to"]').value;
 
-            fetch('https://port-0-uav-delivery-service-m08fk98t55315a03.sel4.cloudtype.app/submit-form', {
+            fetch('https://port-0-uav-service-m08fk98t55315a03.sel4.cloudtype.app/submit-form', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ leaving_from: leavingFrom, going_to: goingTo }),
@@ -50,7 +50,7 @@
         }
 
         function fetchSubmissions() {
-            fetch('https://port-0-uav-delivery-service-m08fk98t55315a03.sel4.cloudtype.app/submissions')
+            fetch('https://port-0-uav-service-m08fk98t55315a03.sel4.cloudtype.app/submissions')
             .then(response => response.json())
             .then(data => {
                 const submissionsDiv = document.getElementById('submissions');
