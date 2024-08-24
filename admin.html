@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - UAV Delivery Service</title>
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+</head>
+<body>
+    <h1>Admin - UAV Delivery Service</h1>
+
+    <h2>Submissions:</h2>
+    <div id="submissions"></div>
+
+    <script>
+        function fetchSubmissions() {
+            fetch('https://port-0-uav-service-m08fk98t55315a03.sel4.cloudtype.app/data')
+            .then(response => response.json())
+            .then(data => {
+                const submissionsDiv = document.getElementById('submissions');
+                submissionsDiv.innerHTML = ''; // Clear the current list
+                data.forEach(submission => {
+                    const p = document.createElement('p');
+                    p.textContent = `Leaving from: ${submission.leavingFrom}, Going to: ${submission.goingTo}`;
+                    submissionsDiv.appendChild(p);
+                });
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                alert(`There was an error fetching the submissions: ${error.message}`);
+            });
+        }
+
+        // Fetch submissions on page load
+        window.onload = fetchSubmissions;
+    </script>
+</body>
+</html>

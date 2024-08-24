@@ -23,9 +23,6 @@
         </div>
     </form>
 
-    <h2>Submissions:</h2>
-    <div id="submissions"></div>
-
     <script>
         function submitForm(event) {
             event.preventDefault();
@@ -41,34 +38,12 @@
             .then(response => response.text())
             .then(data => {
                 alert(data); // Display the success message from the server
-                fetchSubmissions(); // Refresh the list of submissions
             })
             .catch(error => {
                 console.error('Fetch error:', error);
                 alert(`There was an error submitting the form: ${error.message}`);
             });
         }
-
-        function fetchSubmissions() {
-            fetch('https://port-0-uav-service-m08fk98t55315a03.sel4.cloudtype.app/submissions')
-            .then(response => response.json())
-            .then(data => {
-                const submissionsDiv = document.getElementById('submissions');
-                submissionsDiv.innerHTML = ''; // Clear the current list
-                data.forEach(submission => {
-                    const p = document.createElement('p');
-                    p.textContent = `Leaving from: ${submission.leavingFrom}, Going to: ${submission.goingTo}`;
-                    submissionsDiv.appendChild(p);
-                });
-            })
-            .catch(error => {
-                console.error('Fetch error:', error);
-                alert(`There was an error fetching the submissions: ${error.message}`);
-            });
-        }
-
-        // Fetch submissions on page load
-        window.onload = fetchSubmissions;
     </script>
 </body>
 </html>

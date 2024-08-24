@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const cors = require('cors'); // CORS 모듈 추가
+const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -12,9 +12,14 @@ app.use(express.json());
 // In-memory data store
 let submissions = [];
 
-// Serve the index.html file
+// Serve the index.html file for users
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Serve the admin.html file for administrators
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
 // Handle form submission
@@ -28,8 +33,8 @@ app.post('/submit-form', (req, res) => {
     res.send('Form data received successfully!');
 });
 
-// Provide data at root endpoint
-app.get('/submissions', (req, res) => {
+// Provide data at /data endpoint (for admin use)
+app.get('/data', (req, res) => {
     res.json(submissions);
 });
 
