@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UAV_Delivery_Service</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .input { padding: 10px; margin: 5px; }
+        .button2 { padding: 10px 20px; margin: 5px; background-color: blue; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body id="page1">
+    <div class="body1">
+        <div class="main">
+            <header>
+                <div class="wrapper">
+                    <h1><a href="/" id="logo">UAV_Delivery_Service</a><span id="slogan">Quick Convenient Stable</span></h1>
+                </div>
+            </header>
+        </div>
+    </div>
+    <div class="main">
+        <section id="content">
+            <article class="col1">
+                <div class="pad_1">
+                    <h2>UAV Delivery Service</h2>
+                    <form id="form_1" onsubmit="submitForm(event)">
+                        <div class="wrapper"> Leaving From:
+                            <div class="bg">
+                                <input type="text" name="leaving_from" class="input" value="Enter City or Airport Code" onBlur="if(this.value=='') this.value='Enter City or Airport Code'" onFocus="if(this.value =='Enter City or Airport Code' ) this.value=''">
+                            </div>
+                        </div>
+                        <div class="wrapper"> Going To:
+                            <div class="bg">
+                                <input type="text" name="going_to" class="input" value="Enter City or Airport Code" onBlur="if(this.value=='') this.value='Enter City or Airport Code'" onFocus="if(this.value =='Enter City or Airport Code' ) this.value=''">
+                            </div>
+                        </div>
+                        <div class="wrapper">
+                            <input type="submit" class="button2" value="Submit">
+                        </div>
+                    </form>
+                </div>
+            </article>
+        </section>
+    </div>
+    <script>
+        function submitForm(event) {
+            event.preventDefault();
+            const leavingFrom = document.querySelector('input[name="leaving_from"]').value;
+            const goingTo = document.querySelector('input[name="going_to"]').value;
+
+            fetch('https://port-0-uav-delivery-service-m08fk98t55315a03.sel4.cloudtype.app', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ leaving_from: leavingFrom, going_to: goingTo }),
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data); // 서버로부터 받은 성공 메시지를 표시
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('There was an error submitting the form.');
+            });
+        }
+    </script>
+</body>
+</html>
