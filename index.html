@@ -148,10 +148,10 @@
             <div class="bg">
                 <h2>현재 비행 가능한 기체</h2>
                 <div class="image-grid">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1VFWPk5dgI29aKb27ZiHFWrozTe2Ue2VC_Q&s" alt="UAV 1" onclick="selectImage(this)">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYG_mfGFAaJqNcTVeywfRJ0jppOrbSMYtyZg&s" alt="UAV 2" onclick="selectImage(this)">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQODHu5XUmBX2LB50iICpsvpnpE0JZI-nU8vA&s" alt="UAV 3" onclick="selectImage(this)">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSuVoYqt4fqmTeZO5CraZAQJlD5S-R-2shpQ&s" alt="UAV 4" onclick="selectImage(this)">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1VFWPk5dgI29aKb27ZiHFWrozTe2Ue2VC_Q&s" alt="UAV 1" data-id="uav1" onclick="selectImage('uav1')">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYG_mfGFAaJqNcTVeywfRJ0jppOrbSMYtyZg&s" alt="UAV 2" data-id="uav2" onclick="selectImage('uav2')">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQODHu5XUmBX2LB50iICpsvpnpE0JZI-nU8vA&s" alt="UAV 3" data-id="uav3" onclick="selectImage('uav3')">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSuVoYqt4fqmTeZO5CraZAQJlD5S-R-2shpQ&s" alt="UAV 4" data-id="uav4" onclick="selectImage('uav4')">
                 </div>
             </div>
         </div>
@@ -207,43 +207,65 @@
         }
 
         function setLeavingFrom(value) {
+            localStorage.setItem('leavingFrom', value);
             document.getElementById('leaving_from').value = value;
             console.log('Leaving From set to:', value); // Debugging line
         }
 
         function setGoingTo(value) {
+            localStorage.setItem('goingTo', value);
             document.getElementById('going_to').value = value;
             console.log('Going To set to:', value); // Debugging line
+        }
+
+        function selectImage(id) {
+            // 선택된 이미지 ID를 로컬 스토리지에 저장
+            localStorage.setItem('selectedImageId', id);
+            
+            // 이미지 선택 시 시각적인 표시
+            const images = document.querySelectorAll('.image-grid img');
+            images.forEach(image => {
+                image.classList.remove('selected');
+            });
+
+            const selectedImage = document.querySelector(`.image-grid img[data-id="${id}"]`);
+            if (selectedImage) {
+                selectedImage.classList.add('selected');
+            }
         }
 
         function submitForm(event) {
             event.preventDefault();
 
-            const form = document.getElementById('form_1');
-            const formData = new FormData(document.getElementById('form_1'));
-            
-            fetch('https://port-0-uav-service-m08fk98t55315a03.sel4.cloudtype.app/submit-form', {
-                method: 'POST',
-                body: formData,
-            })
-            .then(response => response.text())
-            .then(data => {
-                alert(data); // Display the success message from the server
-                // fetchSubmissions(); // Refresh the list of submissions
-                form.reset();  // 모든 입력 필드를 초기화
-                // 선택된 이미지를 초기화
-                const images = document.querySelectorAll('.image-grid img');
-                images.forEach(image => {
-                    image.classList.remove('selected');
-                });
-                localStorage.removeItem('selectedImageId');
+            // 선택된 이미지 ID 확인
+            const selectedImageId = localStorage.getItem('selectedImageId');
+            if (selectedImageId) {
+                // 폼 데이터 생성
+                const form = document.getElementById('form_1');
+                const formData = new FormData(form);
 
-                window.location.href = 'mypage.html';
-            })
-            .catch(error => {
-                console.error('Fetch error:', error);
-                alert(`There was an error submitting the form: ${error.message}`);
-            });
+                fetch('https://port-0-uav-service-m08fk98t55315a03.sel4.cloudtype.app/submit-form', {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => response.text())
+                .then(data => {
+                    alert(data); // 서버의 성공 메시지 표시
+                    form.reset(); // 폼 필드 초기화
+                    localStorage.removeItem('selectedImageId'); // 선택된 이미지 ID 초기화
+
+                    // 페이지 전환
+                    const leavingFrom = localStorage.getItem('leavingFrom');
+                    const goingTo = localStorage.getItem('goingTo');
+                    window.location.href = `mypage.html?image=${selectedImageId}&from=${leavingFrom}&to=${goingTo}`;
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    alert(`There was an error submitting the form: ${error.message}`);
+                });
+            } else {
+                alert('Please select an image.');
+            }
         }
 
         function initializeSelection() {

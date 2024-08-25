@@ -30,6 +30,12 @@
             border-radius: 5px;
         }
 
+        .description {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+
         .button-group {
             margin-top: 20px;
         }
@@ -47,13 +53,20 @@
         .button-group button:hover {
             background-color: #0056b3;
         }
+
+        .spacer {
+            margin-top: 100px; /* 20px의 간격 추가 */
+        }
     </style>
 </head>
 <body>
-    <h1>Selected Image</h1>
-    <div class="image-container" id="imageContainer">
-        <!-- Selected image will be displayed here -->
-    </div>
+    <h1>선택한 기체</h1>
+    <div class="image-container" id="imageContainer"></div>
+    <div class="description" id="imageDescription"></div>
+    <div class="spacer"></div>
+    <h2>이동 경로</h2>
+    <div id="map" style="width: 400px; height: 400px; display: block; margin: 0 auto;"></div>
+    <div class="spacer"></div>
     <div class="button-group">
         <button onclick="goBack()">Go Back</button>
     </div>
@@ -67,17 +80,85 @@
             'uav4': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSuVoYqt4fqmTeZO5CraZAQJlD5S-R-2shpQ&s'
         };
 
+        const imageDescriptions = {
+            'uav1': '선택하신 기체는 멀티콥터 타입입니다.\n높은 하중을 견딜 수 있으며, 단거리 비행에 적합합니다.\n\n예상 소요시간: 7분 10초\n\n결제 금액: 5600원',
+            'uav2': '선택하신 기체는 멀티콥터 타입입니다.\n높은 하중을 견딜 수 있으며, 단거리 비행에 적합합니다.\n\n예상 소요시간: 6분 10초\n\n결제 금액: 6700원',
+            'uav3': '선택하신 기체는 멀티콥터 타입입니다.\n높은 하중을 견딜 수 있으며, 단거리 비행에 적합합니다.\n\n예상 소요시간: 6분 30초\n\n결제 금액: 6300원',
+            'uav4': '선택하신 기체는 VTOL-Tilting 타입입니다.\n고속 비행과 장거리 비행에 적합합니다.\n\n예상 소요시간: 2분 30초\n\n결제 금액: 8300원'
+        };
+
         function displaySelectedImage() {
-            const imageId = localStorage.getItem('selectedImageId');
+            const imageId = new URLSearchParams(window.location.search).get('image');
             const imageContainer = document.getElementById('imageContainer');
-            
+            const imageDescription = document.getElementById('imageDescription');
+
             if (imageId && imageUrls[imageId]) {
                 const img = document.createElement('img');
                 img.src = imageUrls[imageId];
                 img.alt = 'Selected Image';
                 imageContainer.appendChild(img);
+
+                // Convert newlines to <br> tags
+                const descriptionText = imageDescriptions[imageId] || 'No description available.';
+                imageDescription.innerHTML = descriptionText.replace(/\n/g, '<br>');
             } else {
                 imageContainer.innerHTML = '<p>No image selected.</p>';
+                imageDescription.innerHTML = '';
+            }
+        }
+
+        function initMap() {
+            const map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 37.512138, lng: 126.976741 },
+                zoom: 11
+            });
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const imageId = urlParams.get('image');
+            const from = urlParams.get('from');
+            const to = urlParams.get('to');
+
+            const vertiportLocations_start = {
+                'A': { lat: 37.594923, lng: 126.977403 },
+                'B': { lat: 37.581967, lng: 127.054851 },
+                'C': { lat: 37.498863, lng: 126.951643 },
+                'D': { lat: 37.496682, lng: 127.062956 }
+            };
+
+            const vertiportLocations_finish = {
+                'A': { lat: 37.526805, lng: 126.934469 },
+                'B': { lat: 37.516852, lng: 126.971831 },
+                'C': { lat: 37.510618, lng: 126.995889 },
+                'D': { lat: 37.527473, lng: 127.019462 }
+            };
+
+            const start = vertiportLocations_start[from];
+            const end = vertiportLocations_finish[to];
+
+            if (start && end) {
+                // Add a marker for the start point
+                new google.maps.Marker({
+                    position: start,
+                    map: map,
+                    title: 'Start Point'
+                });
+
+                // Add a marker for the end point
+                new google.maps.Marker({
+                    position: end,
+                    map: map,
+                    title: 'End Point'
+                });
+
+                // Draw a line between the start and end points
+                new google.maps.Polyline({
+                    path: [start, end],
+                    geodesic: true,
+                    strokeColor: '#FF0000',
+                    strokeOpacity: 1.0,
+                    strokeWeight: 2,
+                    map: map
+                });
             }
         }
 
@@ -86,7 +167,11 @@
         }
 
         // Display the selected image on page load
-        window.onload = displaySelectedImage;
+        window.onload = function() {
+            displaySelectedImage();
+            initMap();
+        };
     </script>
+    <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6dZ6OVIOhJxqv8gzld22tXPoJAEsRuhc&callback=initMap"></script>
 </body>
 </html>
