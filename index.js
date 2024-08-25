@@ -35,6 +35,11 @@ app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
+// Serve mypage.html for users
+app.get('/mypage.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'mypage.html'));
+});
+
 // Handle form submission with file upload
 app.post('/submit-form', upload.single('photo'), (req, res) => {
     const { leaving_from, going_to } = req.body;

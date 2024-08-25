@@ -236,6 +236,7 @@
                 images.forEach(image => {
                     image.classList.remove('selected');
                 });
+                localStorage.removeItem('selectedImageId');
 
                 window.location.href = 'mypage.html';
             })
