@@ -14,8 +14,13 @@
         }
 
         h1 {
-            margin-top: 20px; /* Adjust top margin as needed */
-            margin-bottom: 20px; /* Space below the heading */
+            margin-top: 50px; /* Adjust top margin as needed */
+            margin-bottom: 50px; /* Space below the heading */
+        }
+
+        h2 {
+            margin-top: 10px;
+            margin-bottom: 10px;
         }
 
         .wrapper {
@@ -69,51 +74,138 @@
             max-width: 100%;
             height: auto;
         }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* Create 2 columns */
+            gap: 20px; /* Space between images */
+            max-width: 400px; /* Limit the width of the grid */
+            margin: 0 auto; /* Center the grid */
+        }
+
+        .image-grid img {
+            width: 100%; /* Ensure images take full width of their container */
+            height: auto; /* Maintain aspect ratio */
+            cursor: pointer; /* Show pointer on hover */
+            border: 2px solid transparent; /* 기본 상태에서는 테두리 없음 */
+            transition: border-color 0.3s;
+        }
+
+        .image-grid img.selected {
+            border-color: #007bff; /* 선택된 이미지의 테두리 색상 */
+        }
+
+        .spacer {
+            margin-top: 100px; /* 20px의 간격 추가 */
+        }
     </style>
+    <script defer src="./index.js"></script>
+    <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6dZ6OVIOhJxqv8gzld22tXPoJAEsRuhc&callback=initMap"></script>
 </head>
 <body>
     <h1>UAV Delivery Service</h1>
-    <img src="images/logo.jpg" alt="Example Image" style="max-width: 100%; height: auto;">
     <p></p>
+
+    <h2> 사용자 가이드 </h2>
+        <p>UAV Delivery Service는 서울특별시 한강공원에서 제공되는 안전하고 빠른 배송 서비스입니다.</p>
+        <p> 사용자는 출발지점, 도착지점을 선택할 수 있으며 배송에 사용되는 기체의 종류를 정할 수 있습니다.</p>
+    
+    <div class="spacer"></div>
     
     <form id="form_1" onsubmit="submitForm(event)" enctype="multipart/form-data">
         <div class="wrapper">
             <div class='bg'>
-                <label>Leaving From:</label>
-                <input type="text" name="leaving_from" id="leaving_from" placeholder="Enter City or Airport Code">
+                <h2>버티포트 장소</h2>
+                <div id="map" style="width: 400px; height: 400px; display: block; margin: 0 auto;"></div>
+            </div>
+        </div>
+        <div class="wrapper">
+            <div class='bg'>
+                <label>출발 버티포트:</label>
+                <input type="text" name="leaving_from" id="leaving_from" placeholder="출발 지역을 선택해주세요">
+                <p></p>
                 <div class="button-group">
-                    <button type="button" onclick="setLeavingFrom('A')">A</button>
-                    <button type="button" onclick="setLeavingFrom('B')">B</button>
-                    <button type="button" onclick="setLeavingFrom('C')">C</button>
-                    <button type="button" onclick="setLeavingFrom('D')">D</button>
+                    <button type="button" onclick="setLeavingFrom('A')">A: 종로구</button>
+                    <button type="button" onclick="setLeavingFrom('B')">B: 동대문구</button>
+                    <button type="button" onclick="setLeavingFrom('C')">C 동작구</button>
+                    <button type="button" onclick="setLeavingFrom('D')">D 강남구</button>
                 </div>
             </div>
         </div>
         <div class="wrapper">
             <div class='bg'>
-                <label>Going To:</label>
-                <input type="text" name="going_to" id="going_to" placeholder="Enter City or Airport Code">
+                <label>도착 버티포트:</label>
+                <input type="text" name="going_to" id="going_to" placeholder="배송지를 입력해주세요">
                 <div class="button-group">
-                    <button type="button" onclick="setGoingTo('A')">A</button>
-                    <button type="button" onclick="setGoingTo('B')">B</button>
-                    <button type="button" onclick="setGoingTo('C')">C</button>
-                    <button type="button" onclick="setGoingTo('D')">D</button>
+                    <button type="button" onclick="setGoingTo('A')">A 구역</button>
+                    <button type="button" onclick="setGoingTo('B')">B 구역</button>
+                    <button type="button" onclick="setGoingTo('C')">C 구역</button>
+                    <button type="button" onclick="setGoingTo('D')">D 구역</button>
                 </div>
             </div>
         </div>
-        <div>
-            <input type="submit" value="Submit">
+        <div class="wrapper">
+            <div class="bg">
+                <h2>현재 비행 가능한 기체</h2>
+                <div class="image-grid">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1VFWPk5dgI29aKb27ZiHFWrozTe2Ue2VC_Q&s" alt="UAV 1" onclick="selectImage(this)">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYG_mfGFAaJqNcTVeywfRJ0jppOrbSMYtyZg&s" alt="UAV 2" onclick="selectImage(this)">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQODHu5XUmBX2LB50iICpsvpnpE0JZI-nU8vA&s" alt="UAV 3" onclick="selectImage(this)">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSuVoYqt4fqmTeZO5CraZAQJlD5S-R-2shpQ&s" alt="UAV 4" onclick="selectImage(this)">
+                </div>
+            </div>
+        </div>
+        <div class="wrapper">
+            <div>
+                <input type="submit" value="Submit">
+            </div>
+            <div class="spacer"></div> 
         </div>
     </form>
 
-    <h2>Submissions:</h2>
     <div id="submissions"></div>
 
-    <h2>Example Image:</h2>
-    <!-- Static Image from 'image' folder -->
-    <img src="images/img_1.jpg" alt="Example Image" style="max-width: 100%; height: auto;">
+
 
     <script>
+        function initMap() {
+            const map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 37.512138, lng: 126.976741 },
+                zoom: 15
+            });
+
+            const vertiport = [
+                { label: 'A 구역', name: 'A 구역', lat: 37.526805, lng: 126.934469 },
+                { label: 'B 구역', name: 'B 구역', lat: 37.516852, lng: 126.971831 },
+                { label: 'C 구역', name: 'C 구역', lat: 37.510618, lng: 126.995889 },
+                { label: 'D 구역', name: 'D 구역', lat: 37.527473, lng: 127.019462 }
+            ];
+
+            const bounds = new google.maps.LatLngBounds();
+
+            vertiport.forEach(({ label, lat, lng }) => {
+                const marker = new google.maps.Marker({
+                    position: { lat, lng },
+                    label: label,
+                    map: map
+                });
+                bounds.extend(marker.position);
+            });
+
+            map.fitBounds(bounds);
+        }
+
+        function selectImage(img) {
+            // 모든 이미지를 선택 해제
+            const images = document.querySelectorAll('.image-grid img');
+            images.forEach(image => {
+                image.classList.remove('selected');
+            });
+
+            // 클릭한 이미지를 선택
+            img.classList.add('selected');
+        }
+
         function setLeavingFrom(value) {
             document.getElementById('leaving_from').value = value;
             console.log('Leaving From set to:', value); // Debugging line
@@ -136,7 +228,7 @@
             .then(response => response.text())
             .then(data => {
                 alert(data); // Display the success message from the server
-                fetchSubmissions(); // Refresh the list of submissions
+                // fetchSubmissions(); // Refresh the list of submissions
             })
             .catch(error => {
                 console.error('Fetch error:', error);
@@ -153,16 +245,6 @@
                 data.forEach(submission => {
                     const p = document.createElement('p');
                     p.textContent = `Leaving from: ${submission.leavingFrom}, Going to: ${submission.goingTo}`;
-                    
-                    // Create an image element if a photo is available
-                    if (submission.photo) {
-                        const img = document.createElement('img');
-                        img.src = submission.photo;
-                        img.style.maxWidth = '200px';
-                        img.style.maxHeight = '200px';
-                        img.alt = 'Uploaded photo';
-                        p.appendChild(img);
-                    }
 
                     submissionsDiv.appendChild(p);
                 });
