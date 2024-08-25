@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            margin-top: 50px;
+            margin-bottom: 30px;
+        }
+
+        .image-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+        }
+
+        .button-group {
+            margin-top: 20px;
+        }
+
+        .button-group button {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .button-group button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Selected Image</h1>
+    <div class="image-container" id="imageContainer">
+        <!-- Selected image will be displayed here -->
+    </div>
+    <div class="button-group">
+        <button onclick="goBack()">Go Back</button>
+    </div>
+
+    <script>
+        // UAV 이미지 URL 매핑
+        const imageUrls = {
+            'uav1': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1VFWPk5dgI29aKb27ZiHFWrozTe2Ue2VC_Q&s',
+            'uav2': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYG_mfGFAaJqNcTVeywfRJ0jppOrbSMYtyZg&s',
+            'uav3': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQODHu5XUmBX2LB50iICpsvpnpE0JZI-nU8vA&s',
+            'uav4': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSuVoYqt4fqmTeZO5CraZAQJlD5S-R-2shpQ&s'
+        };
+
+        function displaySelectedImage() {
+            const imageId = localStorage.getItem('selectedImageId');
+            const imageContainer = document.getElementById('imageContainer');
+            
+            if (imageId && imageUrls[imageId]) {
+                const img = document.createElement('img');
+                img.src = imageUrls[imageId];
+                img.alt = 'Selected Image';
+                imageContainer.appendChild(img);
+            } else {
+                imageContainer.innerHTML = '<p>No image selected.</p>';
+            }
+        }
+
+        function goBack() {
+            window.history.back(); // Go back to the previous page
+        }
+
+        // Display the selected image on page load
+        window.onload = displaySelectedImage;
+    </script>
+</body>
+</html>

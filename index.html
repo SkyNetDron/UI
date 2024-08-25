@@ -127,8 +127,8 @@
                 <div class="button-group">
                     <button type="button" onclick="setLeavingFrom('A')">A: 종로구</button>
                     <button type="button" onclick="setLeavingFrom('B')">B: 동대문구</button>
-                    <button type="button" onclick="setLeavingFrom('C')">C 동작구</button>
-                    <button type="button" onclick="setLeavingFrom('D')">D 강남구</button>
+                    <button type="button" onclick="setLeavingFrom('C')">C: 동작구</button>
+                    <button type="button" onclick="setLeavingFrom('D')">D: 강남구</button>
                 </div>
             </div>
         </div>
@@ -218,7 +218,8 @@
 
         function submitForm(event) {
             event.preventDefault();
-            
+
+            const form = document.getElementById('form_1');
             const formData = new FormData(document.getElementById('form_1'));
             
             fetch('https://port-0-uav-service-m08fk98t55315a03.sel4.cloudtype.app/submit-form', {
@@ -229,6 +230,14 @@
             .then(data => {
                 alert(data); // Display the success message from the server
                 // fetchSubmissions(); // Refresh the list of submissions
+                form.reset();  // 모든 입력 필드를 초기화
+                // 선택된 이미지를 초기화
+                const images = document.querySelectorAll('.image-grid img');
+                images.forEach(image => {
+                    image.classList.remove('selected');
+                });
+
+                window.location.href = 'mypage.html';
             })
             .catch(error => {
                 console.error('Fetch error:', error);
@@ -236,23 +245,33 @@
             });
         }
 
-        function fetchSubmissions() {
-            fetch('https://port-0-uav-service-m08fk98t55315a03.sel4.cloudtype.app/data')
-            .then(response => response.json())
-            .then(data => {
-                const submissionsDiv = document.getElementById('submissions');
-                submissionsDiv.innerHTML = ''; // Clear the current list
-                data.forEach(submission => {
-                    const p = document.createElement('p');
-                    p.textContent = `Leaving from: ${submission.leavingFrom}, Going to: ${submission.goingTo}`;
+        function initializeSelection() {
+            const selectedImageId = localStorage.getItem('selectedImageId');
+            if (selectedImageId) {
+                const img = document.querySelector(`.image-grid img[data-id="${selectedImageId}"]`);
+                if (img) {
+                    img.classList.add('selected');
+                }
+            }
+        }
 
-                    submissionsDiv.appendChild(p);
-                });
-            })
-            .catch(error => {
-                console.error('Fetch error:', error);
-                alert(`There was an error fetching the submissions: ${error.message}`);
-            });
+        function fetchSubmissions() {
+            // fetch('https://port-0-uav-service-m08fk98t55315a03.sel4.cloudtype.app/data')
+            // .then(response => response.json())
+            // .then(data => {
+            //     const submissionsDiv = document.getElementById('submissions');
+            //     submissionsDiv.innerHTML = ''; // Clear the current list
+            //     data.forEach(submission => {
+            //         const p = document.createElement('p');
+            //         p.textContent = `Leaving from: ${submission.leavingFrom}, Going to: ${submission.goingTo}`;
+
+            //         submissionsDiv.appendChild(p);
+            //     });
+            // })
+            // .catch(error => {
+            //     console.error('Fetch error:', error);
+            //     alert(`There was an error fetching the submissions: ${error.message}`);
+            // });
         }
 
         // Fetch submissions on page load
