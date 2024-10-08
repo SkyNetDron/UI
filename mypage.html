@@ -115,14 +115,12 @@
 
             const urlParams = new URLSearchParams(window.location.search);
             const imageId = urlParams.get('image');
+            urlParams.set('from', 'A');
             const from = urlParams.get('from');
             const to = urlParams.get('to');
 
             const vertiportLocations_start = {
-                'A': { lat: 37.594923, lng: 126.977403 },
-                'B': { lat: 37.581967, lng: 127.054851 },
-                'C': { lat: 37.498863, lng: 126.951643 },
-                'D': { lat: 37.496682, lng: 127.062956 }
+                'A': { lat: 37.500565, lng: 126.994181 }
             };
 
             const vertiportLocations_finish = {

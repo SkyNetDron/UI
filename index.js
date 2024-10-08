@@ -42,12 +42,12 @@ app.get('/mypage.html', (req, res) => {
 
 // Handle form submission with file upload
 app.post('/submit-form', upload.single('photo'), (req, res) => {
-    const { leaving_from, going_to } = req.body;
+    const { going_to } = req.body;
     
-    console.log(`Leaving from: ${leaving_from}, Going to: ${going_to}`);
+    console.log(`Going to: ${going_to}`);
     
     // Store the submitted data
-    submissions.push({ leavingFrom: leaving_from, goingTo: going_to });
+    submissions.push({ goingTo: going_to });
     
     res.send('Form data received successfully!');
 });

@@ -93,7 +93,7 @@
                 submissionsDiv.innerHTML = ''; // Clear the current list
                 data.forEach(submission => {
                     const p = document.createElement('p');
-                    p.textContent = `Leaving from: ${submission.leavingFrom}, Going to: ${submission.goingTo}`;
+                    p.textContent = `Going to: ${submission.goingTo}`;
                     p.innerHTML = p.innerHTML.replace(/, /g, ',<br>'); // 줄바꿈 추가
                     submissionsDiv.appendChild(p);
                 });
